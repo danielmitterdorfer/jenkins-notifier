@@ -52,7 +52,7 @@ Create a new file in `~/Library/LaunchAgents/org.github.jenkins-notifier.plist` 
 
   <key>ProgramArguments</key>
   <array>
-    <string>~/bin/notifier.py</string>
+    <string>~/bin/notify.py</string>
   </array>
 
   <key>Nice</key>
