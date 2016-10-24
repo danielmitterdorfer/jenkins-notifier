@@ -16,9 +16,9 @@ import jenkins
 import pync
 
 
-def read(section, key, default_value):
-    if key in section:
-        value = section[key]
+def read(config, section, key, default_value):
+    if key in config[section]:
+        value = config[section][key]
         if len(value) > 0:
             return value
         else:
@@ -50,17 +50,17 @@ def main():
         if section == JENKINS_URL:
             continue
         job = section
-        last_known_build_number = int(read(job, "build_number", 0))
-        last_known_build_status = read(job, "build_status", "Unknown")
+        last_known_build_number = int(read(config, job, "build_number", 0))
+        last_known_build_status = read(config, job, "build_status", "Unknown")
 
         job_info = jenkins_server.get_job_info(section)
         latest_build = job_info["builds"][0]
-        if latest_build["number"] > last_known_build_number:
+        if int(latest_build["number"]) > last_known_build_number:
             # check details
             build_info = jenkins_server.get_build_info(section, latest_build["number"])
             # is it already finished and the status has also changed?
             if build_info["result"]:
-                if build_info["result"] != last_known_build_status:
+                if str(build_info["result"]) != last_known_build_status:
                     # Show info
                     pync.Notifier.notify("%s build #%d: %s" % (job, latest_build["number"], build_info["result"]),
                                          title="Build status: %s" % build_info["result"],
